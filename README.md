@@ -7,6 +7,18 @@ Runs on Node.js (default port: **3000**) and is available as a Docker image.
 
 ---
 
+## ⚙️ Configuration
+
+This service requires an API key from [newsapi.org](https://newsapi.org/).  
+Obtain your **NEWSAPI_KEY** and place it into a `.env` file in your project root:
+
+```bash
+# .env
+NEWSAPI_KEY=your_newsapi_key_here
+```
+
+---
+
 ## 🚀 Quick Start
 
 ```bash
