@@ -35,6 +35,12 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
+      
+      - name: Get Env
+        run: |
+          touch ./.env
+          echo "${{secrets.PRODUCTION_ENV}}" > ./.env
+        shell: bash
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
