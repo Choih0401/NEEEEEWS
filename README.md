@@ -1,5 +1,7 @@
 # 📰 NEEEEEWS
 
+[![Build & Push Docker Image](https://github.com/Choih0401/neeeeews/actions/workflows/deploy-image.yml/badge.svg)](https://github.com/Choih0401/neeeeews/actions/workflows/deploy-image.yml)
+
 NEEEEEWS — A SvelteKit-based web service that fetches stock & forex news, summarizes sentiment, and displays results in a clean dashboard.  
 Runs on Node.js (default port: **3000**) and is available as a Docker image.
 
