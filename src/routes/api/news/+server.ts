@@ -1,6 +1,6 @@
 // src/routes/api/news/+server.ts
 import type { RequestHandler } from '@sveltejs/kit';
-import { NEWSAPI_KEY, BING_NEWS_KEY, BING_NEWS_DISABLE } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 /** ───────────────────────────────────────────────────────────────
  *  Types
@@ -353,7 +353,7 @@ function targetedSentiment(text: string, q: string, aliases: string[], W = 12): 
  *  ─────────────────────────────────────────────────────────────── */
 
 async function fetchFromNewsAPI(q: string, lang: Lang, fromISO: string): Promise<News[]> {
-  if (!NEWSAPI_KEY) return [];
+  if (!env.NEWSAPI_KEY) return [];
   const language = lang === 'kr' ? 'ko' : 'en';
   const url = new URL('https://newsapi.org/v2/everything');
   url.searchParams.set('q', q);
@@ -361,7 +361,7 @@ async function fetchFromNewsAPI(q: string, lang: Lang, fromISO: string): Promise
   url.searchParams.set('from', fromISO);
   url.searchParams.set('sortBy', 'publishedAt');
   url.searchParams.set('pageSize', '50');
-  url.searchParams.set('apiKey', NEWSAPI_KEY);
+  url.searchParams.set('apiKey', env.NEWSAPI_KEY);
 
   const r = await fetch(url, { headers: { 'User-Agent': 'SvelteKit-NewsFetcher/1.0' } });
   if (!r.ok) throw new Error(`NewsAPI failed: ${r.status}`);
@@ -397,7 +397,7 @@ async function fetchFromNewsAPI(q: string, lang: Lang, fromISO: string): Promise
 }
 
 async function fetchFromBing(q: string, lang: Lang, days: number): Promise<News[]> {
-  if (!BING_NEWS_KEY) return [];
+  if (!env.BING_NEWS_KEY) return [];
   const mkt = lang === 'kr' ? 'ko-KR' : 'en-US';
   const freshness = days <= 1 ? 'Day' : days <= 3 ? 'Week' : 'Month';
 
@@ -409,7 +409,7 @@ async function fetchFromBing(q: string, lang: Lang, days: number): Promise<News[
   url.searchParams.set('sortBy', 'Date');
 
   const r = await fetch(url, {
-    headers: { 'Ocp-Apim-Subscription-Key': BING_NEWS_KEY, 'User-Agent': 'SvelteKit-NewsFetcher/1.0' }
+    headers: { 'Ocp-Apim-Subscription-Key': env.BING_NEWS_KEY, 'User-Agent': 'SvelteKit-NewsFetcher/1.0' }
   });
   if (!r.ok) throw new Error(`Bing News failed: ${r.status}`);
   const json = await r.json();
@@ -507,13 +507,13 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
   // Provider 선택: NEWSAPI → BING → (없으면 501)
   const sources: News[][] = [];
   try {
-    if (NEWSAPI_KEY) sources.push(await fetchFromNewsAPI(q, lang, fromISO));
+    if (env.NEWSAPI_KEY) sources.push(await fetchFromNewsAPI(q, lang, fromISO));
   } catch (e) {
     console.error(e);
   }
-  if(!BING_NEWS_DISABLE){
+  if(!env.BING_NEWS_DISABLE){
     try {
-        if (BING_NEWS_KEY) sources.push(await fetchFromBing(q, lang, days));
+        if (env.BING_NEWS_KEY) sources.push(await fetchFromBing(q, lang, days));
     } catch (e) {
         console.error(e);
     }
@@ -521,12 +521,12 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 
   const merged = sources.flat();
 
-  const hasNews = !!NEWSAPI_KEY;
-  const hasBing = !!BING_NEWS_KEY && !BING_NEWS_DISABLE;
+  const hasNews = !!env.NEWSAPI_KEY;
+  const hasBing = !!env.BING_NEWS_KEY && !env.BING_NEWS_DISABLE;
 
   if (!hasNews && !hasBing) {
     return new Response(
-      JSON.stringify({ error: 'No news providers configured. Set NEWSAPI_KEY (or BING_NEWS_KEY).' }),
+      JSON.stringify({ error: 'No news providers configured. Set env.env.NEWSAPI_KEY (or env.BING_NEWS_KEY).' }),
       { status: 501, headers: { 'content-type': 'application/json' } }
     );
   }
