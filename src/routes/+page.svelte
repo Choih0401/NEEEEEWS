@@ -183,7 +183,7 @@
 
     <!-- 힌트 -->
     <p class="text-xs text-slate-500">
-      ⌨️ <span class="font-medium">Enter</span>로 검색, <span class="font-medium">Shift+Enter</span>는 줄바꿈.  |  예: <code class="bg-slate-100 rounded px-1">USDKRW</code>,
+      ⌨️ <span class="font-medium">Enter</span>로 검색  |  예: <code class="bg-slate-100 rounded px-1">USDKRW</code>,
       <code class="bg-slate-100 rounded px-1">005930</code>, <code class="bg-slate-100 rounded px-1">AAPL</code>
     </p>
   </section>
